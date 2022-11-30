@@ -993,6 +993,18 @@ int mpv_open_cplugin(mpv_handle *mpv)
     int pipe[2];
     guint mpv_pipe_source;
     guint timeout_source;
+    char *script_opts;
+    char *option;
+    int no_mpris = 0;
+
+    script_opts = g_strdup(mpv_get_property_string(mpv, "script-opts"));
+    option = strtok(script_opts, ",");
+    while (option && !no_mpris) {
+        if (!strcmp(option, "mpris=no")) no_mpris = 1;
+        option = strtok(NULL, ",");
+    }
+    free(script_opts);
+    if (no_mpris) return 0;
 
     loop = g_main_loop_new(NULL, FALSE);
 
